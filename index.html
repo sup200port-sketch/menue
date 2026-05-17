@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منيو المقهى الذكي - اطلب الآن</title>
+    <!-- استدعاء Tailwind CSS للتصميم العصري -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء أيقونات Lucide للاحترافية البصرية -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- خطوط جوجل العربية الفخمة (Tajawal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fcfbfa;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="text-stone-800 pb-32">
+
+    <!-- غلاف المقهى العلوي (Header Hero) -->
+    <div id="cafe-cover"
+        class="relative h-48 bg-cover bg-center rounded-b-[2rem] overflow-hidden shadow-lg transition-all duration-500"
+        style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(44,30,21,0.85)), url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80');">
+
+        <!-- زر لوحة المدير السري في الأعلى -->
+        <button onclick="promptManagerAccess()"
+            class="absolute top-4 left-4 bg-white/20 backdrop-blur-md p-2.5 rounded-full text-white border border-white/20 hover:bg-white/30 transition-all z-20"
+            title="لوحة تحكم المدير">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+
+        <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <span class="bg-amber-600/90 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">مفتوح
+                        الآن</span>
+                    <h1 id="cafe-name" class="text-2xl font-black">جاري التحميل...</h1>
+                    <p id="cafe-location" class="text-stone-300 text-xs flex items-center gap-1 mt-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> تيبازة، الجزائر
+                    </p>
+                </div>
+                <!-- رقم الطاولة المكتشف من الرابط -->
+                <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center">
+                    <span class="text-xs text-stone-300 block">طاولة رقم</span>
+                    <span id="table-number" class="text-xl font-bold text-amber-400">05</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مؤشر جاري تحميل البيانات من السحاب -->
+    <div id="db-loader"
+        class="flex items-center justify-center gap-2 py-4 text-amber-800 bg-amber-50 text-xs font-bold border-b border-amber-100">
+        <span
+            class="animate-spin inline-block w-4 h-4 border-2 border-amber-800 border-t-transparent rounded-full"></span>
+        جاري مزامنة المنيو الحقيقي من السحاب...
+    </div>
+
+    <!-- شريط تصفية الأقسام السريع (Categories Scroll) -->
+    <div class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm z-30 border-b border-stone-100">
+        <div class="flex gap-2 overflow-x-auto px-4 no-scrollbar">
+            <button onclick="filterCategory('all')" id="cat-all"
+                class="category-btn active px-4 py-2 rounded-full text-sm font-bold bg-amber-900 text-white transition-all whitespace-nowrap shadow-md shadow-amber-900/10">
+                الكل 🔥
+            </button>
+            <button onclick="filterCategory('hot')"
+                class="category-btn px-4 py-2 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all whitespace-nowrap">
+                قهوة ساخنة ☕
+            </button>
+            <button onclick="filterCategory('cold')"
+                class="category-btn px-4 py-2 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all whitespace-nowrap">
+                مشروبات باردة 🍹
+            </button>
+            <button onclick="filterCategory('sweets')"
+                class="category-btn px-4 py-2 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all whitespace-nowrap">
+                حلويات وباتيسري 🍰
+            </button>
+            <button onclick="filterCategory('snacks')"
+                class="category-btn px-4 py-2 rounded-full text-sm font-bold bg-stone-100 text-stone-600 hover:bg-stone-200 transition-all whitespace-nowrap">
+                مأكولات خفيفة 🥪
+            </button>
+        </div>
+    </div>
+
+    <!-- قائمة المشروبات والمأكولات (Menu List) -->
+    <div class="px-4 mt-6">
+        <h2 class="text-lg font-black text-stone-900 mb-4 flex items-center gap-2">
+            <span class="w-1.5 h-5 bg-amber-600 rounded-full inline-block"></span>
+            قائمة الطلبات المتاحة
+        </h2>
+
+        <!-- كروت المنتجات -->
+        <div id="menu-items" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- سيتم ملء العناصر ديناميكياً من الـ Firebase -->
+        </div>
+    </div>
+
+    <!-- السلة العائمة في الأسفل (Floating Cart Bar) -->
+    <div id="cart-footer"
+        class="fixed bottom-0 inset-x-0 bg-white border-t border-stone-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] p-4 z-40 rounded-t-[1.5rem] hidden">
+        <div class="max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-sm font-medium text-stone-600">طلبك الحالي جاهز</span>
+                </div>
+                <button onclick="toggleCartModal()" class="text-amber-700 text-sm font-bold flex items-center gap-1">
+                    عرض وتأكيد السلة <i data-lucide="chevron-up" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="flex gap-3">
+                <div class="flex-1 bg-amber-50 rounded-2xl p-3 flex flex-col justify-center">
+                    <span class="text-[10px] text-stone-500 block">المجموع الإجمالي</span>
+                    <span id="cart-total" class="text-lg font-bold text-amber-900">0.00 دج</span>
+                </div>
+                <button onclick="toggleCartModal()"
+                    class="flex-[2] bg-amber-950 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-amber-950/20 hover:bg-amber-900 transition-colors">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-amber-400"></i>
+                    اطلب الآن (<span id="cart-count">0</span>)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة تفاصيل الطلب والسلة الكاملة (Cart Modal) -->
+    <div id="cart-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300">
+        <div
+            class="bg-white w-full max-w-md rounded-t-[2.5rem] p-6 max-h-[85vh] overflow-y-auto shadow-2xl translate-y-full transition-transform duration-300">
+            <div class="flex justify-between items-center pb-4 border-b border-stone-100 mb-6">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-basket" class="w-6 h-6 text-amber-700"></i>
+                    <h3 class="text-lg font-black text-stone-900">سلة المشتريات</h3>
+                </div>
+                <button onclick="toggleCartModal()"
+                    class="bg-stone-100 text-stone-500 p-2 rounded-full hover:bg-stone-200 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="cart-items-list" class="space-y-4 mb-6"></div>
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-sm font-bold text-stone-700 mb-2">رقم الطاولة الحالية:</label>
+                    <input type="number" id="input-table" value="5"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-center text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-stone-700 mb-2">ملاحظات إضافية (اختياري):</label>
+                    <textarea id="order-notes" rows="2" placeholder="مثال: سكر خفيف، بدون نعناع..."
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"></textarea>
+                </div>
+            </div>
+
+            <div class="bg-stone-50 rounded-2xl p-4 border border-stone-100 space-y-2.5 mb-6">
+                <div class="flex justify-between text-sm text-stone-600">
+                    <span>مجموع الطلبات:</span>
+                    <span id="subtotal-price">0 دج</span>
+                </div>
+                <div class="flex justify-between text-sm text-emerald-600 font-bold">
+                    <span>رسوم الخدمة الرقمية:</span>
+                    <span>مجانية 🎁</span>
+                </div>
+                <div
+                    class="border-t border-stone-200 my-2 pt-2.5 flex justify-between font-black text-stone-900 text-lg">
+                    <span>الإجمالي النهائي:</span>
+                    <span id="final-total-price" class="text-amber-800">0 دج</span>
+                </div>
+            </div>
+
+            <button onclick="submitOrder()" id="btn-submit-order"
+                class="w-full bg-amber-950 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-950/20 hover:bg-amber-900 transition-colors">
+                <i data-lucide="send" class="w-5 h-5 text-amber-400"></i>
+                إرسال الطلب ديريكت للشيف
+            </button>
+        </div>
+    </div>
+
+    <!-- رسالة نجاح الطلب المنبثقة (Success Modal) -->
+    <div id="success-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl">
+            <div
+                class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-xl font-black text-stone-900 mb-2">تم إرسال طلبك بنجاح!</h3>
+            <p class="text-sm text-stone-600 mb-6">الطلب وصل ديريكت للكوزينة برقم طاولتك وصوت التنبيه صونا عند الشيف،
+                ثواني ويكون طلبك واجد!</p>
+            <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 mb-6">
+                <span class="text-xs text-amber-800 block">رقم طلبك للمتابعة</span>
+                <span id="order-id" class="text-lg font-bold text-amber-900">#0000</span>
+            </div>
+            <button onclick="closeSuccessModal()"
+                class="w-full bg-stone-900 text-white py-3.5 rounded-xl font-bold hover:bg-stone-800 transition-colors">
+                حسناً، رائع
+            </button>
+        </div>
+    </div>
+
+    <!-- لوحة إدخال الرمز السري للمدير -->
+    <div id="password-modal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl">
+            <div
+                class="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-black text-stone-900 mb-2">دخول الإدارة</h3>
+            <p class="text-xs text-stone-500 mb-4">يرجى إدخال الرمز السري الخاص بالمدير للوصول للتعديلات.</p>
+            <input type="password" id="manager-pass" placeholder="أدخل الرمز (الافتراضي 1234)"
+                class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-center text-lg font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-600 mb-4">
+            <div class="flex gap-3">
+                <button onclick="closePasswordModal()"
+                    class="flex-1 bg-stone-100 text-stone-600 py-3 rounded-xl font-bold">إلغاء</button>
+                <button onclick="checkManagerPassword()"
+                    class="flex-1 bg-amber-900 text-white py-3 rounded-xl font-bold">دخول</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== لوحة تحكم المدير الكاملة السحرية ==================== -->
+    <div id="manager-dashboard" class="fixed inset-0 bg-stone-100 z-50 hidden overflow-y-auto">
+        <!-- شريط علوي للوحة التحكم -->
+        <div
+            class="bg-white border-b border-stone-200 sticky top-0 p-4 shadow-sm flex justify-between items-center z-30">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+                <h2 class="font-black text-lg text-stone-900">لوحة إدارة المقهى الذكي</h2>
+            </div>
+            <button onclick="closeManagerDashboard()"
+                class="bg-stone-100 text-stone-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1 hover:bg-stone-200">
+                خروج والرجوع للمنيو <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <div class="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+
+            <!-- تبويبات لوحة التحكم -->
+            <div class="flex border-b border-stone-200 bg-white rounded-2xl p-2 shadow-sm gap-2">
+                <button onclick="switchTab('tab-orders')" id="btn-tab-orders"
+                    class="flex-1 py-3 text-center rounded-xl text-sm font-black bg-amber-900 text-white transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="bell" class="w-4 h-4"></i> الطلبات الحية <span id="orders-badge"
+                        class="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] hidden">0</span>
+                </button>
+                <button onclick="switchTab('tab-menu')" id="btn-tab-menu"
+                    class="flex-1 py-3 text-center rounded-xl text-sm font-black bg-transparent text-stone-600 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="coffee" class="w-4 h-4"></i> تعديل المنيو
+                </button>
+                <button onclick="switchTab('tab-config')" id="btn-tab-config"
+                    class="flex-1 py-3 text-center rounded-xl text-sm font-black bg-transparent text-stone-600 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="sliders" class="w-4 h-4"></i> إعدادات المقهى
+                </button>
+            </div>
+
+            <!-- التبويب 1: قائمة الطلبات الواردة فوراً من الزبائن -->
+            <div id="tab-orders" class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-stone-800 flex items-center gap-2">
+                        <i data-lucide="bell-ring" class="text-amber-700 animate-bounce"></i> شاشة استقبال الطلبات في
+                        المطبخ
+                    </h3>
+                    <span class="text-xs text-stone-500">محدثة تلقائياً وثانية بثانية ⚡</span>
+                </div>
+                <div id="active-orders-list" class="space-y-4">
+                    <!-- سيتم حقن الطلبات الحية هنا -->
+                </div>
+            </div>
+
+            <!-- التبويب 2: تعديل وإضافة وحذف عناصر المنيو -->
+            <div id="tab-menu" class="space-y-6 hidden">
+                <!-- نموذج إضافة/تعديل عنصر في المنيو -->
+                <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm">
+                    <h3 id="form-title" class="font-black text-stone-900 text-base mb-4 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="text-amber-700"></i> إضافة مشروب/حلويات جديدة للمنيو
+                    </h3>
+                    <form id="item-form" class="space-y-4" onsubmit="saveMenuItem(event)">
+                        <input type="hidden" id="edit-item-id">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-1">اسم المشروب / الطبق:</label>
+                                <input type="text" id="item-name" required
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-1">القسم (التصنيف):</label>
+                                <select id="item-category" required
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                                    <option value="hot">☕ قهوة ساخنة</option>
+                                    <option value="cold">🍹 مشروبات باردة</option>
+                                    <option value="sweets">🍰 حلويات وباتيسري</option>
+                                    <option value="snacks">🥪 مأكولات خفيفة</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-1">السعر (بالدينار الجزائري
+                                    DA):</label>
+                                <input type="number" id="item-price" required
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة المشروب (اختياري أو
+                                    اتركه فارغاً):</label>
+                                <input type="url" id="item-image" placeholder="أدخل رابط صورة من الإنترنت"
+                                    class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 mb-1">وصف المشروب (المكونات):</label>
+                            <textarea id="item-desc" rows="2"
+                                placeholder="مثال: قهوة غنية مع رغوة حليب شوكولاتة مبشورة..."
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button type="button" onclick="resetItemForm()"
+                                class="px-5 py-3 bg-stone-100 text-stone-600 font-bold rounded-xl text-sm">تفريغ
+                                الحقول</button>
+                            <button type="submit" id="btn-save-item"
+                                class="px-6 py-3 bg-amber-900 text-white font-bold rounded-xl text-sm shadow-md flex items-center gap-1">
+                                <i data-lucide="check" class="w-4 h-4"></i> حفظ ونشر في المنيو ديريكت
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- قائمة المشروبات الحالية لإجراء التعديل أو الحذف السريع -->
+                <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm space-y-4">
+                    <h3 class="font-black text-stone-900 text-base flex items-center gap-2">
+                        <i data-lucide="list-ordered" class="text-amber-700"></i> إدارة وتعديل المشروبات المتواجدة
+                        حالياً
+                    </h3>
+                    <div id="manager-items-list" class="divide-y divide-stone-100 space-y-3">
+                        <!-- سيتم حقن قائمة العناصر هنا لتسهيل تعديلها أو حذفها -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- التبويب 3: إعدادات المقهى (الاسم، الموقع، غلاف الواجهة) -->
+            <div id="tab-config" class="space-y-4 hidden">
+                <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm space-y-4">
+                    <h3 class="font-black text-stone-900 text-base mb-4 flex items-center gap-2">
+                        <i data-lucide="sliders" class="text-amber-700"></i> تعديل بيانات المظهر العام للمقهى
+                    </h3>
+                    <form id="config-form" onsubmit="saveCafeConfig(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 mb-1">اسم المقهى:</label>
+                            <input type="text" id="config-name" required
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 mb-1">موقع المقهى
+                                (المدينة/الولاية):</label>
+                            <input type="text" id="config-location" required
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة الغلاف العلوي (Hero
+                                Image):</label>
+                            <input type="url" id="config-cover"
+                                class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" id="btn-save-config"
+                                class="w-full bg-amber-950 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-amber-900 transition-colors">
+                                <i data-lucide="save" class="w-4 h-4"></i> حفظ تعديلات المظهر ونشرها فوراً
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- مقتطف للصوت عند استقبال طلب جديد في شاشة المطبخ -->
+    <audio id="order-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-500.wav" preload="auto"></audio>
+
+    <!-- ==================== كود الجافا سكريبت الاحترافي وربط قاعدة البيانات Firebase ==================== -->
+    <script type="module">
+        // استدعاء مكتبات Firebase السحابية
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // إعدادات Firebase الخاصة بالبروجكت المشترك
+        const firebaseConfig = {
+            apiKey: "AIzaSyARl6lOtlSaoSHxsqK26xrL_osIQUwJ96o",
+            authDomain: "zxzx-4c783.firebaseapp.com",
+            projectId: "zxzx-4c783",
+            storageBucket: "zxzx-4c783.firebasestorage.app",
+            messagingSenderId: "208874352422",
+            appId: "1:208874352422:web:565c695383aea8e0da9be7",
+            measurementId: "G-ELDWWSRJQK"
+        };
+
+        // تهيئة خدمات السحابية
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'restaurant-system';
+
+        // قائمة البيانات الافتراضية لتهيئة قاعدة البيانات في أول تشغيل لكي لا يظهر المقهى فارغاً
+        const defaultMenu = [
+            { id: "hot_1", name: "قهوة إسبريسو مزدوجة", category: "hot", price: 180, description: "بن إيطالي أصيل مركز وغني بالكريمة والنكهة القوية.", image: "https://images.unsplash.com/photo-1510707577719-fa7c18161074?auto=format&fit=crop&w=300&q=80" },
+            { id: "hot_2", name: "كابوتشينو كلاسيكي", category: "hot", price: 250, description: "مزيج متوازن من الإسبريسو الفاخر والحليب الساخن مع رغوة كريمية غنية.", image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=300&q=80" },
+            { id: "cold_1", name: "ميلك شيك شوكولاتة", category: "cold", price: 350, description: "مثلج الشوكولاتة اللذيذ مع الكريمة المخفوقة ورقائق الشوكولاتة البلجيكية.", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=300&q=80" },
+            { id: "sweets_1", name: "تارت الشوكولاتة الفاخرة", category: "sweets", price: 320, description: "قاعدة بسكويت مقرمشة غنية بكريمة الشوكولاتة الذائبة واللوز.", image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=300&q=80" }
+        ];
+
+        // مصفوفات حالة التطبيق محلياً
+        let currentMenu = [];
+        let cart = {};
+        let activeCategory = 'all';
+        let userAuth = null;
+        let unsubscribeMenu = null;
+        let unsubscribeOrders = null;
+
+        // دالة بدء تشغيل التطبيق والتحقق من التوثيق الأمني
+        window.addEventListener('load', async () => {
+            // جلب رقم الطاولة من الرابط ديريكت
+            const urlParams = new URLSearchParams(window.location.search);
+            const table = urlParams.get('table');
+            if (table) {
+                document.getElementById('table-number').innerText = table;
+                document.getElementById('input-table').value = table;
+            }
+
+            try {
+                // تسجيل دخول مجهول لتأمين الاتصال قبل أي استعلام
+                userAuth = await signInAnonymously(auth);
+
+                // بدء استقبال المزامنة الفورية
+                initializeMenuListener();
+                initializeConfigListener();
+                initializeActiveOrdersListener();
+            } catch (err) {
+                console.error("فشل تأمين اتصال Firebase المجهول:", err);
+            }
+        });
+
+        // 1. الاستماع الفوري لقائمة الطعام (Real-time Menu synchronization)
+        function initializeMenuListener() {
+            if (!userAuth) return;
+
+            const menuCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'menuItems');
+
+            unsubscribeMenu = onSnapshot(menuCollectionRef, async (snapshot) => {
+                let items = [];
+                snapshot.forEach(doc => {
+                    items.push({ docId: doc.id, ...doc.data() });
+                });
+
+                // إذا كانت قاعدة البيانات فارغة تماماً (أول تشغيل للموقع)، نقوم بتهيئتها ببيانات المنيو الافتراضي
+                if (items.length === 0) {
+                    document.getElementById('db-loader').innerText = "تهيئة قاعدة البيانات بالمنيو الافتراضي للمقهى...";
+                    for (let item of defaultMenu) {
+                        await addDoc(menuCollectionRef, item);
+                    }
+                    return; // ستطلق Firebase حدث snapshot جديد فوراً تلقائياً
+                }
+
+                currentMenu = items;
+                document.getElementById('db-loader').classList.add('hidden'); // إخفاء مؤشر التحميل بعد جلب أول نسخة واكتشافها
+                renderCustomerMenu();
+                renderManagerItemsList();
+            }, (error) => {
+                console.error("خطأ المزامنة السحابية للمنيو:", error);
+            });
+        }
+
+        // 2. الاستماع الفوري لإعدادات المظهر العام للمقهى
+        function initializeConfigListener() {
+            const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'cafeConfig', 'mainConfig');
+
+            onSnapshot(configDocRef, async (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.data();
+                    document.getElementById('cafe-name').innerText = data.name || "مقهى اللحظة الدافئة";
+                    document.getElementById('cafe-location').innerHTML = `<i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> ${data.location || 'تيبازة، الجزائر'}`;
+
+                    if (data.cover) {
+                        document.getElementById('cafe-cover').style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(44,30,21,0.85)), url('${data.cover}')`;
+                    }
+
+                    // ملء حقول الإعدادات في لوحة التحكم تلقائياً
+                    document.getElementById('config-name').value = data.name || "";
+                    document.getElementById('config-location').value = data.location || "";
+                    document.getElementById('config-cover').value = data.cover || "";
+                } else {
+                    // تهيئة الإعدادات لأول مرة في Firebase
+                    await setDoc(configDocRef, {
+                        name: "مقهى اللحظة الدافئة",
+                        location: "تيبازة، الجزائر",
+                        cover: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80"
+                    });
+                }
+                lucide.createIcons();
+            });
+        }
+
+        // 3. الاستماع الفوري لطلبات الزبائن في لوحة تحكم المطبخ
+        let previousOrdersCount = -1;
+        function initializeActiveOrdersListener() {
+            const ordersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+
+            unsubscribeOrders = onSnapshot(ordersCollectionRef, (snapshot) => {
+                let orders = [];
+                snapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+
+                // ترتيب الطلبات من الأحدث للأقدم
+                orders.sort((a, b) => b.timestamp - a.timestamp);
+
+                // إطلاق صوت جرس المطبخ في حالة قدوم طلب جديد للتو
+                if (previousOrdersCount !== -1 && orders.length > previousOrdersCount) {
+                    const sound = document.getElementById('order-sound');
+                    if (sound) sound.play().catch(e => console.log("تفعيل الصوت يتطلب تفاعل المستخدم أولاً."));
+                }
+                previousOrdersCount = orders.length;
+
+                // تحديث الشارة الحمراء للطلبات الحية غير المكتملة
+                const badge = document.getElementById('orders-badge');
+                if (orders.length > 0) {
+                    badge.innerText = orders.length;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+
+                renderActiveOrders(orders);
+            });
+        }
+
+        // دالة رسم منيو الزبائن تفاعلياً بناءً على السحاب والفلترة
+        function renderCustomerMenu() {
+            const container = document.getElementById('menu-items');
+            container.innerHTML = '';
+
+            const filteredItems = activeCategory === 'all'
+                ? currentMenu
+                : currentMenu.filter(item => item.category === activeCategory);
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-3xl border border-stone-100 p-6">
+                        <i data-lucide="coffee" class="w-12 h-12 text-stone-300 mx-auto mb-2"></i>
+                        <p class="text-stone-500 text-sm">لا تتوفر مشروبات في هذا القسم حالياً.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                const count = cart[item.id] ? cart[item.id].qty : 0;
+                const defaultImg = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=300&q=80";
+
+                const itemHtml = `
+                    <div class="bg-white rounded-3xl p-3 border border-stone-100 flex gap-4 hover:shadow-md transition-shadow duration-300 relative group">
+                        <img src="${item.image || defaultImg}" onerror="this.src='${defaultImg}'" alt="${item.name}" class="w-24 h-24 object-cover rounded-2xl bg-stone-50 shadow-inner flex-shrink-0">
+                        <div class="flex flex-col justify-between flex-1">
+                            <div>
+                                <h3 class="font-bold text-stone-900 text-sm md:text-base leading-tight">${item.name}</h3>
+                                <p class="text-xs text-stone-500 mt-1 line-clamp-2">${item.description || 'وصف خفيف وسريع ولذيذ يقدم طازجاً زبائن المقهى الكرام.'}</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-2.5">
+                                <span class="font-black text-amber-900 text-sm md:text-base">${item.price} دج</span>
+                                
+                                <div class="flex items-center gap-2.5 bg-stone-50 border border-stone-100 p-1 rounded-full">
+                                    <button onclick="window.updateQty('${item.id}', -1)" class="w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center hover:bg-stone-100 transition-colors shadow-sm">
+                                        <i data-lucide="minus" class="w-4 h-4 text-stone-600"></i>
+                                    </button>
+                                    <span id="qty-${item.id}" class="text-sm font-bold w-4 text-center">${count}</span>
+                                    <button onclick="window.updateQty('${item.id}', 1)" class="w-8 h-8 rounded-full bg-amber-900 flex items-center justify-center hover:bg-amber-800 transition-colors shadow-sm">
+                                        <i data-lucide="plus" class="w-4 h-4 text-white"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHtml;
+            });
+            lucide.createIcons();
+        }
+
+        // دالة تحديث السلة والكميات من المنيو الحركي
+        window.updateQty = function (id, change) {
+            const item = currentMenu.find(i => i.id === id);
+            if (!item) return;
+
+            if (!cart[id]) {
+                cart[id] = { ...item, qty: 0 };
+            }
+
+            cart[id].qty += change;
+
+            if (cart[id].qty <= 0) {
+                delete cart[id];
+            }
+
+            const qtyElement = document.getElementById(`qty-${id}`);
+            if (qtyElement) {
+                qtyElement.innerText = cart[id] ? cart[id].qty : 0;
+            }
+
+            updateCartTotals();
+        };
+
+        function updateCartTotals() {
+            let total = 0;
+            let count = 0;
+
+            for (let id in cart) {
+                total += cart[id].price * cart[id].qty;
+                count += cart[id].qty;
+            }
+
+            const cartFooter = document.getElementById('cart-footer');
+            if (count > 0) {
+                cartFooter.classList.remove('hidden');
+            } else {
+                cartFooter.classList.add('hidden');
+                document.getElementById('cart-modal').classList.add('hidden');
+            }
+
+            document.getElementById('cart-total').innerText = `${total.toFixed(2)} دج`;
+            document.getElementById('cart-count').innerText = count;
+
+            document.getElementById('subtotal-price').innerText = `${total.toFixed(2)} دج`;
+            document.getElementById('final-total-price').innerText = `${total.toFixed(2)} دج`;
+        }
+
+        window.toggleCartModal = function () {
+            const modal = document.getElementById('cart-modal');
+            const content = modal.querySelector('div');
+
+            if (modal.classList.contains('hidden')) {
+                renderCartItems();
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('translate-y-full');
+                }, 50);
+            } else {
+                modal.classList.add('opacity-0');
+                content.classList.add('translate-y-full');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        };
+
+        function renderCartItems() {
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = '';
+
+            let hasItems = false;
+            for (let id in cart) {
+                hasItems = true;
+                const item = cart[id];
+                const defaultImg = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=300&q=80";
+
+                const itemHtml = `
+                    <div class="flex justify-between items-center py-3 border-b border-stone-100 last:border-none">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image || defaultImg}" onerror="this.src='${defaultImg}'" class="w-12 h-12 object-cover rounded-xl bg-stone-100">
+                            <div>
+                                <h4 class="font-bold text-stone-900 text-sm">${item.name}</h4>
+                                <span class="text-xs text-amber-900 font-bold block">${item.price} دج</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <button onclick="window.updateQtyInCart('${id}', -1)" class="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center hover:bg-stone-200 transition-colors">
+                                <i data-lucide="minus" class="w-3.5 h-3.5 text-stone-600"></i>
+                            </button>
+                            <span class="text-sm font-bold w-4 text-center">${item.qty}</span>
+                            <button onclick="window.updateQtyInCart('${id}', 1)" class="w-7 h-7 rounded-full bg-amber-900 flex items-center justify-center hover:bg-amber-800 transition-colors">
+                                <i data-lucide="plus" class="w-3.5 h-3.5 text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += itemHtml;
+            }
+
+            if (!hasItems) {
+                list.innerHTML = `
+                    <div class="text-center py-10">
+                        <i data-lucide="shopping-basket" class="w-12 h-12 text-stone-300 mx-auto mb-2"></i>
+                        <p class="text-stone-500 text-sm">السلة فارغة حالياً</p>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        window.updateQtyInCart = function (id, change) {
+            window.updateQty(id, change);
+            renderCartItems();
+        };
+
+        window.filterCategory = function (category) {
+            activeCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-900', 'text-white', 'shadow-md', 'shadow-amber-900/10', 'active');
+                btn.classList.add('bg-stone-100', 'text-stone-600');
+            });
+
+            const activeBtn = event.currentTarget;
+            activeBtn.classList.remove('bg-stone-100', 'text-stone-600');
+            activeBtn.classList.add('bg-amber-900', 'text-white', 'shadow-md', 'shadow-amber-900/10', 'active');
+
+            renderCustomerMenu();
+        };
+
+        // إرسال الطلب وحفظه ديريكت في الـ Firebase لكي يظهر عند المدير في الكوزينة في ثانية
+        window.submitOrder = async function () {
+            const tableNum = document.getElementById('input-table').value;
+            const notes = document.getElementById('order-notes').value;
+
+            if (!tableNum || tableNum <= 0) {
+                alert("يرجى إدخال رقم طاولة صحيح لتوصيل الطلب!");
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-order');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full"></span> جاري الإرسال للكوزينة...';
+            btn.disabled = true;
+
+            try {
+                const orderData = {
+                    table: tableNum,
+                    notes: notes,
+                    items: Object.values(cart).map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price })),
+                    timestamp: Date.now(), // للترتيب والتوقيت الحقيقي
+                    timeStr: new Date().toLocaleTimeString('ar-DZ', { hour: '2-digit', minute: '2-digit' })
+                };
+
+                // إرسال الطلب وحفظه في مسار الـ Firebase المعتمد
+                const ordersCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+                await addDoc(ordersCollectionRef, orderData);
+
+                const randomId = Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('order-id').innerText = `#${randomId}`;
+
+                toggleCartModal();
+
+                // تصفير السلة محلياً لإعداد طلب جديد
+                cart = {};
+                document.querySelectorAll('[id^="qty-"]').forEach(el => el.innerText = '0');
+                updateCartTotals();
+
+                document.getElementById('success-modal').classList.remove('hidden');
+
+            } catch (err) {
+                console.error("خطأ إرسال الطلب للـ Firebase:", err);
+                alert("حدث خطأ غير متوقع أثناء إرسال طلبك. يرجى المحاولة مرة أخرى!");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        window.closeSuccessModal = function () {
+            document.getElementById('success-modal').classList.add('hidden');
+        };
+
+        // ==================== وظائف التحكم واللوحة الخاصة بالمدير المبرمجة بالكامل ====================
+
+        window.promptManagerAccess = function () {
+            document.getElementById('password-modal').classList.remove('hidden');
+        };
+
+        window.closePasswordModal = function () {
+            document.getElementById('password-modal').classList.add('hidden');
+            document.getElementById('manager-pass').value = '';
+        };
+
+        // التحقق من الرمز السري للمدير
+        window.checkManagerPassword = function () {
+            const pass = document.getElementById('manager-pass').value;
+            if (pass === '1234') { // رمز حماية افتراضي سهل ومناسب
+                closePasswordModal();
+                document.getElementById('manager-dashboard').classList.remove('hidden');
+                // تفعيل وضع استقبال الطلبات الافتراضي فوراً عند الدخول
+                switchTab('tab-orders');
+            } else {
+                alert("الرمز السري غير صحيح! يرجى إدخال 1234");
+            }
+        };
+
+        window.closeManagerDashboard = function () {
+            document.getElementById('manager-dashboard').classList.add('hidden');
+        };
+
+        // التبديل بين التبويبات في لوحة المدير
+        window.switchTab = function (tabId) {
+            // إخفاء كل التبويبات
+            document.getElementById('tab-orders').classList.add('hidden');
+            document.getElementById('tab-menu').classList.add('hidden');
+            document.getElementById('tab-config').classList.add('hidden');
+
+            // إظهار التبويب النشط
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // تحديث كلاس الأزرار لتأكيد التحديد بصرياً
+            const tabs = ['btn-tab-orders', 'btn-tab-menu', 'btn-tab-config'];
+            tabs.forEach(tId => {
+                const btn = document.getElementById(tId);
+                if (tId === `btn-${tabId}`) {
+                    btn.className = "flex-1 py-3 text-center rounded-xl text-sm font-black bg-amber-900 text-white transition-all flex items-center justify-center gap-2";
+                } else {
+                    btn.className = "flex-1 py-3 text-center rounded-xl text-sm font-black bg-transparent text-stone-600 transition-all flex items-center justify-center gap-2";
+                }
+            });
+            lucide.createIcons();
+        };
+
+        // 1. شاشة المطبخ (رسم وتجهيز وإكمال الطلبات الحية في ثانية)
+        function renderActiveOrders(orders) {
+            const container = document.getElementById('active-orders-list');
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16 bg-white rounded-3xl border border-stone-200">
+                        <div class="w-16 h-16 bg-stone-50 text-stone-300 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="bell-off" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="font-bold text-stone-800">لا توجد طلبات جارية</h4>
+                        <p class="text-xs text-stone-500 mt-1">بمجرد قيام أي زبون بطلب من طاولته، ستسمع صوت رنين وسيظهر طلبه هنا ديريكت!</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            orders.forEach(order => {
+                let itemsListHtml = '';
+                let totalBill = 0;
+
+                order.items.forEach(item => {
+                    itemsListHtml += `
+                        <div class="flex justify-between text-sm py-1">
+                            <span class="font-bold text-stone-800">${item.name} <span class="text-amber-700 font-black">x${item.qty}</span></span>
+                            <span class="text-stone-500 font-medium">${item.price * item.qty} دج</span>
+                        </div>
+                    `;
+                    totalBill += item.price * item.qty;
+                });
+
+                const orderCardHtml = `
+                    <div class="bg-white rounded-3xl p-5 border border-stone-200 shadow-sm space-y-4">
+                        <div class="flex justify-between items-start border-b border-stone-100 pb-3">
+                            <div>
+                                <span class="bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-xs font-black">طاولة رقم: ${order.table}</span>
+                                <span class="text-[10px] text-stone-400 block mt-1.5 flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3 h-3"></i> ${order.timeStr || 'للآن'}
+                                </span>
+                            </div>
+                            <!-- زر إكمال الطلب وحذفه من المطبخ ديريكت -->
+                            <button onclick="window.completeOrder('${order.id}')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1 transition-all">
+                                <i data-lucide="check" class="w-4 h-4"></i> تم التجهيز والخدمة
+                            </button>
+                        </div>
+                        
+                        <div class="divide-y divide-stone-50">
+                            ${itemsListHtml}
+                        </div>
+
+                        ${order.notes ? `
+                            <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-100/50 text-xs text-amber-900">
+                                <span class="font-black block mb-0.5">💡 ملاحظة الزبون:</span>
+                                ${order.notes}
+                            </div>
+                        ` : ''}
+
+                        <div class="flex justify-between items-center pt-3 border-t border-stone-100 font-bold text-sm">
+                            <span class="text-stone-600">الحساب الكلي:</span>
+                            <span class="text-amber-900 font-black text-base">${totalBill} دج</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += orderCardHtml;
+            });
+            lucide.createIcons();
+        }
+
+        // إكمال الطلب وحذفه من قاعدة البيانات فوراً بنقرة زر
+        window.completeOrder = async function (orderId) {
+            try {
+                const orderDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId);
+                await deleteDoc(orderDocRef);
+                // التحديث يتم تلقائياً بفضل الـ onSnapshot
+            } catch (err) {
+                console.error("فشل إكمال وحذف الطلب من السحاب:", err);
+            }
+        };
+
+        // 2. المنيو وتعديلاته من طرف المدير (إضافة / تعديل مشروب)
+        window.saveMenuItem = async function (event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-save-item');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span> جاري الحفظ والنشر...';
+            btn.disabled = true;
+
+            const editId = document.getElementById('edit-item-id').value;
+            const name = document.getElementById('item-name').value;
+            const category = document.getElementById('item-category').value;
+            const price = parseFloat(document.getElementById('item-price').value);
+            const image = document.getElementById('item-image').value;
+            const description = document.getElementById('item-desc').value;
+
+            try {
+                const menuCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'menuItems');
+
+                const itemData = {
+                    id: editId || `item_${Date.now()}`, // توليد معرف فريد إذا كان منتج جديد
+                    name: name,
+                    category: category,
+                    price: price,
+                    image: image || '',
+                    description: description
+                };
+
+                if (editId) {
+                    // وضع التعديل لمنتج متواجد حالياً
+                    const itemDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'menuItems', editId);
+                    await setDoc(itemDocRef, itemData, { merge: true });
+                } else {
+                    // إضافة منتج جديد كلياً
+                    await addDoc(menuCollectionRef, itemData);
+                }
+
+                resetItemForm();
+                alert("تم الحفظ والمزامنة السحابية فوراً! كل زبون في المقهى يرى التحديث حالياً.");
+
+            } catch (err) {
+                console.error("فشل حفظ المشروب في السحاب:", err);
+                alert("فشل الحفظ بسبب مشكلة اتصال بالسحاب.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        // تفريغ الحقول وإعادة النموذج لبيئته الطبيعية
+        window.resetItemForm = function () {
+            document.getElementById('edit-item-id').value = '';
+            document.getElementById('item-form').reset();
+            document.getElementById('form-title').innerHTML = `<i data-lucide="plus-circle" class="text-amber-700"></i> إضافة مشروب/حلويات جديدة للمنيو`;
+            document.getElementById('btn-save-item').innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> حفظ ونشر في المنيو ديريكت`;
+            lucide.createIcons();
+        };
+
+        // رسم المشروبات الحالية في اللوحة لتعديلها أو حذفها
+        function renderManagerItemsList() {
+            const container = document.getElementById('manager-items-list');
+            container.innerHTML = '';
+
+            if (currentMenu.length === 0) {
+                container.innerHTML = `<p class="text-center py-6 text-sm text-stone-400">لا تتوفر مشروبات في المنيو حالياً.</p>`;
+                return;
+            }
+
+            currentMenu.forEach(item => {
+                const defaultImg = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=300&q=80";
+                const catNames = { hot: 'قهوة ساخنة ☕', cold: 'مشروبات باردة 🍹', sweets: 'حلويات وباتيسري 🍰', snacks: 'مأكولات خفيفة 🥪' };
+
+                const listHtml = `
+                    <div class="flex justify-between items-center py-3.5 gap-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image || defaultImg}" onerror="this.src='${defaultImg}'" class="w-12 h-12 object-cover rounded-xl bg-stone-100 shadow-sm flex-shrink-0">
+                            <div>
+                                <h4 class="font-bold text-stone-950 text-sm">${item.name}</h4>
+                                <span class="text-xs font-semibold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full inline-block mt-0.5">${catNames[item.category] || item.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-black text-stone-900 ml-2">${item.price} دج</span>
+                            <!-- زر التعديل المباشر للبيانات -->
+                            <button onclick="window.editMenuItem('${item.docId}')" class="bg-stone-100 text-stone-700 hover:bg-amber-100 hover:text-amber-900 p-2 rounded-xl transition-colors" title="تعديل">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <!-- زر الحذف المباشر والسريع من السحاب -->
+                            <button onclick="window.deleteMenuItem('${item.docId}')" class="bg-red-50 text-red-600 hover:bg-red-100 p-2 rounded-xl transition-colors" title="حذف">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += listHtml;
+            });
+            lucide.createIcons();
+        }
+
+        // تعبئة حقول النموذج لتعديل العنصر
+        window.editMenuItem = function (docId) {
+            const item = currentMenu.find(i => i.docId === docId);
+            if (!item) return;
+
+            document.getElementById('edit-item-id').value = item.docId;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-price').value = item.price;
+            document.getElementById('item-image').value = item.image || '';
+            document.getElementById('item-desc').value = item.description || '';
+
+            document.getElementById('form-title').innerHTML = `<i data-lucide="edit-3" class="text-amber-700"></i> تعديل المشروب: ${item.name}`;
+            document.getElementById('btn-save-item').innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> حفظ التعديلات ونشرها`;
+
+            // سحب الشاشة للأعلى لكي يرى المستخدم النموذج ديريكت
+            document.getElementById('tab-menu').scrollIntoView({ behavior: 'smooth' });
+            lucide.createIcons();
+        };
+
+        // حذف مشروب من السحاب نهائياً
+        window.deleteMenuItem = async function (docId) {
+            const confirmDel = confirm("هل أنت متأكد من رغبتك في حذف هذا المشروب نهائياً من قائمة الزبائن؟");
+            if (!confirmDel) return;
+
+            try {
+                const itemDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'menuItems', docId);
+                await deleteDoc(itemDocRef);
+                alert("تم حذف المشروب بنجاح ومزامنته للزبائن.");
+            } catch (err) {
+                console.error("خطأ أثناء محاولة الحذف السحابي:", err);
+                alert("حدث خطأ، لا يمكن الحذف حالياً.");
+            }
+        };
+
+        // 3. حفظ إعدادات المظهر المخصصة بالمقهى
+        window.saveCafeConfig = async function (event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-save-config');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span> جاري الحفظ والتطبيق...';
+            btn.disabled = true;
+
+            const name = document.getElementById('config-name').value;
+            const location = document.getElementById('config-location').value;
+            const cover = document.getElementById('config-cover').value;
+
+            try {
+                const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'cafeConfig', 'mainConfig');
+                await setDoc(configDocRef, {
+                    name: name,
+                    location: location,
+                    cover: cover
+                }, { merge: true });
+
+                alert("تم تحديث إعدادات المظهر المقهى ومزامنتها لجميع الزبائن ديريكت!");
+            } catch (err) {
+                console.error("فشل حفظ إعدادات المقهى:", err);
+                alert("فشل تحديث البيانات في السحاب.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+    </script>
+</body>
+
+</html>
