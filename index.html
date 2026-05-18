@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منيو المقهى الذكي - اطلب الآن</title>
+    <!-- استدعاء Tailwind CSS للتصميم العصري -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء أيقونات Lucide للاحترافية البصرية -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- خطوط جوجل العربية الفخمة (Tajawal) -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         body {
@@ -27,26 +30,37 @@
 
 <body class="text-stone-800 pb-32">
 
+    <!-- نظام التنبيهات والإشعارات الداخلي السريع -->
+    <div id="toast-container"
+        class="fixed top-5 inset-x-5 sm:inset-x-auto sm:left-5 z-50 space-y-3 pointer-events-none max-w-sm"></div>
+
+    <!-- غلاف المقهى العلوي (Header Hero) -->
     <div class="relative h-48 bg-cover bg-center rounded-b-[2rem] overflow-hidden shadow-lg"
         style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(44,30,21,0.85)), url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80');">
         <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
             <div class="flex justify-between items-center">
                 <div>
-                    <span class="bg-amber-600/90 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">مفتوح
+                    <span class="bg-emerald-600/90 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">مفتوح
                         الآن</span>
                     <h1 id="cafe-name" class="text-2xl font-black">مقهى اللحظة الدافئة</h1>
                     <p class="text-stone-300 text-xs flex items-center gap-1 mt-1">
                         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> تيبازة، الجزائر
                     </p>
                 </div>
-                <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center">
-                    <span class="text-xs text-stone-300 block">طاولة رقم</span>
-                    <span id="table-number" class="text-xl font-bold text-amber-400">--</span>
+                <!-- رقم الطاولة المكتشف - عند النقر عليه يفتح قفل التعديل السري للمدير/العمال بكلمة السر -->
+                <div onclick="window.promptAdminUnlock()"
+                    class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center cursor-pointer hover:bg-white/20 transition-all select-none flex items-center gap-2">
+                    <div>
+                        <span class="text-[10px] text-stone-300 block">طاولة رقم</span>
+                        <span id="table-number" class="text-xl font-bold text-amber-400">--</span>
+                    </div>
+                    <i data-lucide="lock" id="lock-icon" class="w-4 h-4 text-amber-400 opacity-60"></i>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- شريط تصفية الأقسام السريع -->
     <div class="sticky top-0 bg-white/95 backdrop-blur-md py-4 shadow-sm z-30 border-b border-stone-100">
         <div class="flex gap-2 overflow-x-auto px-4 no-scrollbar">
             <button onclick="filterCategory('all')"
@@ -72,14 +86,36 @@
         </div>
     </div>
 
+    <!-- بنر وضع المدير المفعّل (يظهر فقط عند إدخال الكود 123456789) -->
+    <div id="admin-mode-banner"
+        class="hidden bg-amber-950 text-amber-400 px-4 py-3 border-y border-amber-900 flex justify-between items-center">
+        <div class="flex items-center gap-2 text-xs font-bold">
+            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span>وضع تعديل المنيو والطاولات نشط الآن 🛠️</span>
+        </div>
+        <button onclick="window.logoutAdmin()"
+            class="bg-amber-900 hover:bg-amber-800 text-white px-3 py-1 rounded-xl text-[10px] font-black transition-colors">
+            خروج من وضع المدير
+        </button>
+    </div>
+
+    <!-- قائمة المشروبات والمأكولات -->
     <div class="px-4 mt-6">
-        <h2 class="text-lg font-black text-stone-900 mb-4 flex items-center gap-2">
-            <span class="w-1.5 h-5 bg-amber-600 rounded-full inline-block"></span>
-            قائمة الطلبات المتاحة
-        </h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-black text-stone-900 flex items-center gap-2">
+                <span class="w-1.5 h-5 bg-amber-600 rounded-full inline-block"></span>
+                قائمة الطلبات المتاحة
+            </h2>
+            <!-- زر إضافة عنصر جديد للمنيو (يظهر فقط للمدير) -->
+            <button onclick="window.openMenuItemModal()" id="admin-add-item-btn"
+                class="hidden bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 transition-all">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة عنصر للمنيو
+            </button>
+        </div>
         <div id="menu-items" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </div>
 
+    <!-- السلة العائمة في الأسفل -->
     <div id="cart-footer"
         class="fixed bottom-0 inset-x-0 bg-white border-t border-stone-100 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] p-4 z-40 rounded-t-[1.5rem] hidden">
         <div class="max-w-md mx-auto">
@@ -111,6 +147,7 @@
         </div>
     </div>
 
+    <!-- شاشة تفاصيل الطلب والسلة الكاملة -->
     <div id="cart-modal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300">
         <div
@@ -129,6 +166,21 @@
             <div id="cart-items-list" class="space-y-4 mb-6"></div>
 
             <div class="space-y-4 mb-6">
+                <!-- حقل تعديل رقم الطاولة - مخفي افتراضياً، ويظهر فقط عند إدخال كود الحماية 123456789 -->
+                <div id="admin-table-edit-container"
+                    class="hidden bg-amber-50 border border-amber-200 p-4 rounded-2xl space-y-2 transition-all">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black text-amber-900 flex items-center gap-1">
+                            <i data-lucide="unlock" class="w-3.5 h-3.5 text-amber-700"></i> تعديل الطاولة يدوياً (وضع
+                            النادل/المدير):
+                        </label>
+                        <span
+                            class="text-[10px] bg-amber-200 text-amber-800 font-bold px-2 py-0.5 rounded-full">مفتوح</span>
+                    </div>
+                    <input type="number" id="input-table" value="0" min="1"
+                        class="w-full bg-white border border-amber-300 rounded-xl p-3 text-center text-lg font-black text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-600 outline-none">
+                </div>
+
                 <div>
                     <label class="block text-sm font-bold text-stone-700 mb-2">ملاحظات إضافية على الطلب
                         (اختياري):</label>
@@ -161,6 +213,104 @@
         </div>
     </div>
 
+    <!-- ==================== شاشة منبثقة سريعة لطلب الرمز السري للمدير (Passcode Modal) ==================== -->
+    <div id="admin-passcode-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div
+            class="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl space-y-5">
+            <div
+                class="w-12 h-12 bg-amber-950 border border-amber-500 rounded-xl flex items-center justify-center text-amber-500 mx-auto">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            </div>
+            <div class="space-y-1">
+                <h3 class="text-lg font-black text-stone-100">وضع تعديل الطاولات والمنيو</h3>
+                <p class="text-xs text-stone-400">أدخل الرمز السري للمدير/الشيف لتفعيل وضع الإدارة وتعديل البيانات
+                    ديريكت.</p>
+            </div>
+
+            <input type="password" id="admin-unlock-input" maxlength="9" placeholder="•••••••••"
+                class="w-full bg-stone-950 border border-stone-800 text-stone-100 rounded-xl p-3 text-center text-xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500">
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeAdminUnlockModal()"
+                    class="flex-1 bg-stone-800 hover:bg-stone-700 text-stone-300 py-3 rounded-xl text-xs font-bold transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="verifyAdminUnlock()"
+                    class="flex-1 bg-amber-500 hover:bg-amber-400 text-stone-950 py-3 rounded-xl text-xs font-black transition-colors">
+                    تأكيد الرمز
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== نافذة منبثقة لإضافة وتعديل عناصر المنيو (Add/Edit Menu Item Modal) ==================== -->
+    <div id="menu-item-editor-modal"
+        class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div
+            class="bg-white border border-stone-200 w-full max-w-md rounded-[2.5rem] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-stone-100 pb-3">
+                <h3 id="menu-modal-title" class="text-lg font-black text-stone-900">إضافة مشروب/حلوى جديدة</h3>
+                <button onclick="closeMenuItemModal()" class="text-stone-400 hover:text-stone-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="edit-item-doc-id"> <!-- حقل مخفي لحفظ الـ docId عند التعديل -->
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">اسم المشروب أو الطبق:</label>
+                    <input type="text" id="input-item-name"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">السعر (دج):</label>
+                        <input type="number" id="input-item-price"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 mb-1">القسم (الفئة):</label>
+                        <select id="input-item-category"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                            <option value="hot">قهوة ساخنة ☕</option>
+                            <option value="cold">مشروبات باردة 🍹</option>
+                            <option value="sweets">حلويات وباتيسري 🍰</option>
+                            <option value="snacks">مأكولات خفيفة 🥪</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">الوصف التفصيلي:</label>
+                    <textarea id="input-item-desc" rows="2" placeholder="اكتب مكونات أو وصف عصيرك هنا..."
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة العنصر (يمكن تركه
+                        فارغاً):</label>
+                    <input type="url" id="input-item-image" placeholder="https://images.unsplash.com/..."
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeMenuItemModal()"
+                    class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3.5 rounded-xl text-xs font-bold transition-colors">
+                    إلغاء
+                </button>
+                <button onclick="saveMenuItem()"
+                    class="flex-1 bg-amber-950 hover:bg-amber-900 text-white py-3.5 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 shadow-md">
+                    <i data-lucide="check" class="w-4 h-4"></i> حفظ في السحاب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسالة نجاح الطلب المنبثقة -->
     <div id="success-modal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
         <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl">
@@ -182,10 +332,11 @@
         </div>
     </div>
 
+    <!-- ==================== كود الجافا سكريبت وقاعدة البيانات Firebase ==================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // إعدادات الـ Firebase الخاصة بك
         const firebaseConfig = {
@@ -213,6 +364,7 @@
         let cart = {};
         let activeCategory = 'all';
         let detectedTable = "0"; // متغير لحفظ رقم الطاولة بشكل آمن في الخلفية
+        let isAdminActive = false; // متغير لحفظ حالة المدير إن كان نشطاً
 
         // الحصول على رقم الطاولة من الرابط تلقائياً
         window.onload = function () {
@@ -222,8 +374,15 @@
             if (table) {
                 detectedTable = table;
                 document.getElementById('table-number').innerText = table < 10 ? '0' + table : table;
+                document.getElementById('input-table').value = table;
             } else {
                 document.getElementById('table-number').innerText = "--";
+            }
+
+            // فحص حالة الدخول للمدير المخزنة محلياً لتفادي كتابة الباسورد في كل دقيقة
+            const cachedAdmin = localStorage.getItem('menu_admin_session');
+            if (cachedAdmin === 'active') {
+                enableAdminFeatures();
             }
 
             signInAnonymously(auth).then(() => {
@@ -232,11 +391,72 @@
             lucide.createIcons();
         }
 
+        // دمج نظام فتح القفل السري للمدير/النادل بكلمة السر 123456789
+        window.promptAdminUnlock = function () {
+            document.getElementById('admin-unlock-input').value = '';
+            document.getElementById('admin-passcode-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('admin-unlock-input').focus(), 100);
+        };
+
+        window.closeAdminUnlockModal = function () {
+            document.getElementById('admin-passcode-modal').classList.add('hidden');
+        };
+
+        window.verifyAdminUnlock = function () {
+            const secretCode = "123456789";
+            const inputCode = document.getElementById('admin-unlock-input').value;
+
+            if (inputCode === secretCode) {
+                localStorage.setItem('menu_admin_session', 'active');
+                enableAdminFeatures();
+                closeAdminUnlockModal();
+                showNotification("تم تفعيل وضع المدير والتحكم الكامل بالمنيو بنجاح! 🛠️", "success");
+            } else {
+                showNotification("الرمز السري خاطئ! يرجى المحاولة مجدداً.", "error");
+                document.getElementById('admin-unlock-input').value = '';
+                document.getElementById('admin-unlock-input').focus();
+            }
+        };
+
+        // دالة تفعيل ميزات الإدارة والتحكم الفوري بالمنيو والطاولات
+        function enableAdminFeatures() {
+            isAdminActive = true;
+            document.getElementById('admin-table-edit-container').classList.remove('hidden');
+            document.getElementById('admin-add-item-btn').classList.remove('hidden');
+            document.getElementById('admin-mode-banner').classList.remove('hidden');
+
+            const lockIcon = document.getElementById('lock-icon');
+            lockIcon.setAttribute('data-lucide', 'unlock');
+            lucide.createIcons();
+
+            // إعادة رسم القائمة الحالية لتظهر عليها أزرار الحذف والتعديل
+            renderCustomerMenu();
+        }
+
+        // دالة الخروج من وضع الإدارة وقفل الميزات للمدير
+        window.logoutAdmin = function () {
+            localStorage.removeItem('menu_admin_session');
+            isAdminActive = false;
+            document.getElementById('admin-table-edit-container').classList.add('hidden');
+            document.getElementById('admin-add-item-btn').classList.add('hidden');
+            document.getElementById('admin-mode-banner').classList.add('hidden');
+
+            const lockIcon = document.getElementById('lock-icon');
+            lockIcon.setAttribute('data-lucide', 'lock');
+            lucide.createIcons();
+
+            renderCustomerMenu();
+            showNotification("تم الخروج من وضع الإدارة وقفل لوحة التحكم.", "info");
+        }
+
+        // الاستماع المباشر لعناصر المنيو في قاعدة البيانات
         function initializeMenuListener() {
             const menuCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'menuItems');
             onSnapshot(menuCollectionRef, async (snapshot) => {
                 let items = [];
-                snapshot.forEach(doc => items.push(doc.data()));
+                snapshot.forEach(doc => {
+                    items.push({ docId: doc.id, ...doc.data() }); // حفظ معرف السند docId للتحكم اللاحق
+                });
 
                 if (items.length === 0) {
                     for (let item of defaultMenu) {
@@ -250,6 +470,7 @@
             });
         }
 
+        // دالة رسم كروت عناصر المنيو مع ميزات الإدارة إن كانت نشطة
         function renderCustomerMenu() {
             const container = document.getElementById('menu-items');
             container.innerHTML = '';
@@ -260,32 +481,152 @@
                 const count = cart[item.id] ? cart[item.id].qty : 0;
                 const defaultImg = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=300&q=80";
 
+                // أزرار التحكم السرية للمدير التي تظهر بجانب كل مشروب
+                const adminControlsHtml = isAdminActive ? `
+                    <div class="flex gap-2.5 pt-2 mt-2 border-t border-stone-100">
+                        <button onclick="window.editMenuItem('${item.docId}')" class="flex-1 bg-amber-950/10 hover:bg-amber-950/20 text-amber-950 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1 transition-colors">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> تعديل السعر/الاسم
+                        </button>
+                        <button onclick="window.deleteMenuItem('${item.docId}')" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold p-2 rounded-xl flex items-center justify-center transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                ` : '';
+
                 container.innerHTML += `
-                    <div class="bg-white rounded-3xl p-3 border border-stone-100 flex gap-4 hover:shadow-md transition-shadow duration-300">
-                        <img src="${item.image || defaultImg}" alt="${item.name}" class="w-24 h-24 object-cover rounded-2xl bg-stone-100 flex-shrink-0">
-                        <div class="flex flex-col justify-between flex-1">
-                            <div>
-                                <h3 class="font-bold text-stone-900 text-sm md:text-base leading-tight">${item.name}</h3>
-                                <p class="text-xs text-stone-500 mt-1 line-clamp-2">${item.description}</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-2.5">
-                                <span class="font-black text-amber-900 text-sm md:text-base">${item.price} دج</span>
-                                <div class="flex items-center gap-2.5 bg-stone-50 border border-stone-100 p-1 rounded-full">
-                                    <button onclick="window.updateQty('${item.id}', -1)" class="w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center shadow-sm">
-                                        <i data-lucide="minus" class="w-4 h-4 text-stone-600"></i>
-                                    </button>
-                                    <span id="qty-${item.id}" class="text-sm font-bold w-4 text-center">${count}</span>
-                                    <button onclick="window.updateQty('${item.id}', 1)" class="w-8 h-8 rounded-full bg-amber-900 flex items-center justify-center shadow-sm">
-                                        <i data-lucide="plus" class="w-4 h-4 text-white"></i>
-                                    </button>
+                    <div class="bg-white rounded-3xl p-3 border border-stone-100 flex flex-col justify-between hover:shadow-md transition-shadow duration-300">
+                        <div class="flex gap-4">
+                            <img src="${item.image || defaultImg}" alt="${item.name}" class="w-24 h-24 object-cover rounded-2xl bg-stone-100 flex-shrink-0">
+                            <div class="flex flex-col justify-between flex-1">
+                                <div>
+                                    <h3 class="font-bold text-stone-900 text-sm md:text-base leading-tight">${item.name}</h3>
+                                    <p class="text-xs text-stone-500 mt-1 line-clamp-2">${item.description || 'لا يوجد وصف متاح.'}</p>
+                                </div>
+                                <div class="flex justify-between items-center mt-2.5">
+                                    <span class="font-black text-amber-900 text-sm md:text-base">${item.price} دج</span>
+                                    <div class="flex items-center gap-2.5 bg-stone-50 border border-stone-100 p-1 rounded-full">
+                                        <button onclick="window.updateQty('${item.id}', -1)" class="w-8 h-8 rounded-full bg-white border border-stone-100 flex items-center justify-center shadow-sm">
+                                            <i data-lucide="minus" class="w-4 h-4 text-stone-600"></i>
+                                        </button>
+                                        <span id="qty-${item.id}" class="text-sm font-bold w-4 text-center">${count}</span>
+                                        <button onclick="window.updateQty('${item.id}', 1)" class="w-8 h-8 rounded-full bg-amber-900 flex items-center justify-center shadow-sm">
+                                            <i data-lucide="plus" class="w-4 h-4 text-white"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        ${adminControlsHtml}
                     </div>
                 `;
             });
             lucide.createIcons();
         }
+
+        // ==================== ميزات تعديل المنيو للمدير (Firestore CRUD) ====================
+
+        // فتح مودال إضافة/تعديل عنصر جديد للمنيو
+        window.openMenuItemModal = function (editDocId = null) {
+            const modal = document.getElementById('menu-item-editor-modal');
+            const modalTitle = document.getElementById('menu-modal-title');
+
+            // تفريغ الحقول ديريكت
+            document.getElementById('edit-item-doc-id').value = '';
+            document.getElementById('input-item-name').value = '';
+            document.getElementById('input-item-price').value = '';
+            document.getElementById('input-item-desc').value = '';
+            document.getElementById('input-item-image').value = '';
+            document.getElementById('input-item-category').value = 'hot';
+
+            if (editDocId) {
+                // وضع التعديل (تعبئة البيانات الحالية)
+                modalTitle.innerText = "تعديل مشروب/طبق بالمنيو";
+                const targetItem = currentMenu.find(item => item.docId === editDocId);
+                if (targetItem) {
+                    document.getElementById('edit-item-doc-id').value = editDocId;
+                    document.getElementById('input-item-name').value = targetItem.name;
+                    document.getElementById('input-item-price').value = targetItem.price;
+                    document.getElementById('input-item-desc').value = targetItem.description || '';
+                    document.getElementById('input-item-image').value = targetItem.image || '';
+                    document.getElementById('input-item-category').value = targetItem.category || 'hot';
+                }
+            } else {
+                modalTitle.innerText = "إضافة مشروب/طبق جديد للمنيو";
+            }
+
+            modal.classList.remove('hidden');
+            document.getElementById('input-item-name').focus();
+        };
+
+        window.closeMenuItemModal = function () {
+            document.getElementById('menu-item-editor-modal').classList.add('hidden');
+        };
+
+        // حفظ وتحديث عنصر المنيو مباشرة في قاعدة البيانات Firebase
+        window.saveMenuItem = async function () {
+            const docId = document.getElementById('edit-item-doc-id').value;
+            const name = document.getElementById('input-item-name').value;
+            const price = parseFloat(document.getElementById('input-item-price').value);
+            const desc = document.getElementById('input-item-desc').value;
+            const imgUrl = document.getElementById('input-item-image').value;
+            const category = document.getElementById('input-item-category').value;
+
+            if (!name || !price) {
+                showNotification("يرجى ملء اسم الطبق وسعره أولاً لإنقاذ السجل!", "error");
+                return;
+            }
+
+            const itemData = {
+                id: docId || 'item_' + Date.now(), // نولد معرف ثابت إن كان جديداً
+                name: name,
+                price: price,
+                description: desc,
+                image: imgUrl,
+                category: category
+            };
+
+            try {
+                const menuCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'menuItems');
+
+                if (docId) {
+                    // وضع التحديث (Update)
+                    const targetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'menuItems', docId);
+                    await updateDoc(targetDocRef, itemData);
+                    showNotification("تم تحديث المشروب بنجاح في قاعدة البيانات!", "success");
+                } else {
+                    // وضع الإضافة الجديدة (Create)
+                    await addDoc(menuCollectionRef, itemData);
+                    showNotification("تمت إضافة المشروب الجديد للمنيو بنجاح!", "success");
+                }
+
+                closeMenuItemModal();
+            } catch (err) {
+                console.error("فشل حفظ المشروب في السحاب:", err);
+                showNotification("حدث خطأ أثناء حفظ التحديث في قاعدة البيانات.", "error");
+            }
+        };
+
+        // حذف مشروب/طبق نهائياً من المنيو بسحاب Firebase
+        window.deleteMenuItem = async function (docId) {
+            const confirmDel = confirm("هل أنت متأكد من رغبتك في حذف هذا المشروب نهائياً من قائمة الزبائن؟");
+            if (!confirmDel) return;
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'menuItems', docId);
+                await deleteDoc(docRef);
+                showNotification("تم حذف المشروب بنجاح من المنيو.", "success");
+            } catch (err) {
+                console.error("خطأ أثناء محاولة حذف عنصر المنيو:", err);
+                showNotification("حدث خطأ أثناء معالجة الحذف.", "error");
+            }
+        };
+
+        // تعديل مشروب ديريكت
+        window.editMenuItem = function (docId) {
+            window.openMenuItemModal(docId);
+        };
+
+        // ==================== ميزات إدارة سلة الزبون العادية ====================
 
         window.updateQty = function (id, change) {
             const item = currentMenu.find(i => i.id === id);
@@ -373,13 +714,16 @@
             renderCustomerMenu();
         }
 
-        // إرسال الطلب ديريكت للـ Firebase مع رقم الطاولة السري المكتشف تلقائياً
+        // إرسال الطلب ديريكت للـ Firebase مع قراءة رقم الطاولة الديناميكي
         window.submitOrder = async function () {
             const notes = document.getElementById('order-notes').value;
 
-            // إذا لم يتم تحديد طاولة (مثلاً دخل للرابط بشكل عشوائي دون مسح QR)
-            if (detectedTable === "0" || !detectedTable) {
-                alert("الرجاء مسح كود الـ QR المتواجد على طاولتك لإرسال الطلب بنجاح!");
+            // قراءة رقم الطاولة من الحقل (قد يكون معدلاً من النادل بعد إلغاء القفل)
+            const manualTableNum = document.getElementById('input-table').value;
+            const finalTableToSend = manualTableNum && manualTableNum !== "0" ? manualTableNum : detectedTable;
+
+            if (finalTableToSend === "0" || !finalTableToSend) {
+                showNotification("الرجاء مسح كود الـ QR المتواجد على طاولتك لإرسال الطلب بنجاح!", "error");
                 return;
             }
 
@@ -388,7 +732,7 @@
 
             try {
                 const orderData = {
-                    table: detectedTable, // نرسل المتغير المخفي والموثوق مباشرة لمنع التزوير
+                    table: finalTableToSend, // نرسل رقم الطاولة النهائي (الآمن أو المعدل بعد فتح القفل)
                     notes: notes,
                     items: Object.values(cart).map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price })),
                     timestamp: Date.now(),
@@ -404,7 +748,7 @@
 
                 document.getElementById('success-modal').classList.remove('hidden');
             } catch (err) {
-                alert("حدث خطأ في الاتصال بالسحاب.");
+                showNotification("حدث خطأ في الاتصال بالسحاب.", "error");
             } finally {
                 btn.disabled = false;
             }
@@ -413,6 +757,50 @@
         window.closeSuccessModal = function () {
             document.getElementById('success-modal').classList.add('hidden');
         }
+
+        // نظام التنبيهات الداخلي الأنيق
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            let bgClass = "bg-stone-900 text-stone-100 border-stone-800";
+            let icon = "bell";
+
+            if (type === 'success') {
+                bgClass = "bg-emerald-950 text-emerald-300 border-emerald-800";
+                icon = "check-circle";
+            } else if (type === 'error') {
+                bgClass = "bg-red-950 text-red-300 border-red-800";
+                icon = "alert-circle";
+            }
+
+            toast.className = `flex items-center gap-3 p-4 rounded-2xl border shadow-2xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto ${bgClass}`;
+            toast.innerHTML = `
+                <i data-lucide="${icon}" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="text-xs font-bold">${message}</span>
+            `;
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3500);
+        }
+
+        // ربط الضغط على Enter في حقل الباسورد للتحقق السريع
+        document.getElementById('admin-unlock-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                window.verifyAdminUnlock();
+            }
+        });
     </script>
 </body>
 
