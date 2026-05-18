@@ -31,26 +31,22 @@
 <body class="text-stone-800 pb-32">
 
     <!-- نظام التنبيهات والإشعارات الداخلي السريع -->
-    <div id="toast-container"
-        class="fixed top-5 inset-x-5 sm:inset-x-auto sm:left-5 z-50 space-y-3 pointer-events-none max-w-sm"></div>
+    <div id="toast-container" class="fixed top-5 inset-x-5 sm:inset-x-auto sm:left-5 z-50 space-y-3 pointer-events-none max-w-sm"></div>
 
     <!-- غلاف المقهى العلوي الديناميكي (Header Hero) -->
-    <div id="hero-container"
-        class="relative h-48 bg-cover bg-center rounded-b-[2rem] overflow-hidden shadow-lg transition-all duration-500"
+    <div id="hero-container" class="relative h-48 bg-cover bg-center rounded-b-[2rem] overflow-hidden shadow-lg transition-all duration-500"
         style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(44,30,21,0.85)), url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80');">
         <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
             <div class="flex justify-between items-center">
                 <div>
-                    <span class="bg-emerald-600/90 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">مفتوح
-                        الآن</span>
+                    <span class="bg-emerald-600/90 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">مفتوح الآن</span>
                     <h1 id="cafe-name" class="text-2xl font-black">مقهى اللحظة الدافئة</h1>
                     <p id="cafe-location-text" class="text-stone-300 text-xs flex items-center gap-1 mt-1">
                         <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> تيبازة، الجزائر
                     </p>
                 </div>
                 <!-- رقم الطاولة المكتشف - عند النقر عليه يفتح قفل التعديل السري للمدير/العمال بكلمة السر -->
-                <div onclick="window.promptAdminUnlock()"
-                    class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center cursor-pointer hover:bg-white/20 transition-all select-none flex items-center gap-2">
+                <div onclick="window.promptAdminUnlock()" class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/20 text-center cursor-pointer hover:bg-white/20 transition-all select-none flex items-center gap-2">
                     <div>
                         <span class="text-[10px] text-stone-300 block">طاولة رقم</span>
                         <span id="table-number" class="text-xl font-bold text-amber-400">--</span>
@@ -88,20 +84,17 @@
     </div>
 
     <!-- بنر وضع المدير المفعّل (يظهر فقط عند إدخال الكود 123456789) -->
-    <div id="admin-mode-banner"
-        class="hidden bg-amber-950 text-amber-400 px-4 py-3 border-y border-amber-900 flex justify-between items-center gap-2">
+    <div id="admin-mode-banner" class="hidden bg-amber-950 text-amber-400 px-4 py-3 border-y border-amber-900 flex justify-between items-center gap-2">
         <div class="flex items-center gap-2 text-xs font-bold">
             <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
             <span>وضع تعديل المنيو والطاولات نشط الآن 🛠️</span>
         </div>
         <div class="flex items-center gap-2">
             <!-- زر تعديل معلومات المقهى السحابية -->
-            <button onclick="window.openRestaurantConfigModal()"
-                class="bg-amber-800 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-black transition-colors flex items-center gap-1">
+            <button onclick="window.openRestaurantConfigModal()" class="bg-amber-800 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-[10px] font-black transition-colors flex items-center gap-1">
                 <i data-lucide="settings" class="w-3 h-3 text-amber-300"></i> تعديل معلومات المقهى
             </button>
-            <button onclick="window.logoutAdmin()"
-                class="bg-red-950 hover:bg-red-900 text-white px-3 py-1.5 rounded-xl text-[10px] font-black transition-colors">
+            <button onclick="window.logoutAdmin()" class="bg-red-950 hover:bg-red-900 text-white px-3 py-1.5 rounded-xl text-[10px] font-black transition-colors">
                 خروج
             </button>
         </div>
@@ -115,8 +108,7 @@
                 قائمة الطلبات المتاحة
             </h2>
             <!-- زر إضافة عنصر جديد للمنيو (يظهر فقط للمدير) -->
-            <button onclick="window.openMenuItemModal()" id="admin-add-item-btn"
-                class="hidden bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 transition-all">
+            <button onclick="window.openMenuItemModal()" id="admin-add-item-btn" class="hidden bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 transition-all">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة عنصر للمنيو
             </button>
         </div>
@@ -130,8 +122,7 @@
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center gap-2">
                     <span class="relative flex h-3 w-3">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </span>
                     <span class="text-sm font-medium text-stone-600">طلبك الحالي جاهز</span>
@@ -158,8 +149,7 @@
     <!-- شاشة تفاصيل الطلب والسلة الكاملة -->
     <div id="cart-modal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity duration-300">
-        <div
-            class="bg-white w-full max-w-md rounded-t-[2.5rem] p-6 max-h-[85vh] overflow-y-auto shadow-2xl translate-y-full transition-transform duration-300">
+        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] p-6 max-h-[85vh] overflow-y-auto shadow-2xl translate-y-full transition-transform duration-300">
             <div class="flex justify-between items-center pb-4 border-b border-stone-100 mb-6">
                 <div class="flex items-center gap-2">
                     <i data-lucide="shopping-basket" class="w-6 h-6 text-amber-700"></i>
@@ -175,23 +165,18 @@
 
             <div class="space-y-4 mb-6">
                 <!-- حقل تعديل رقم الطاولة - مخفي افتراضياً، ويظهر فقط عند إدخال كود الحماية 123456789 -->
-                <div id="admin-table-edit-container"
-                    class="hidden bg-amber-50 border border-amber-200 p-4 rounded-2xl space-y-2 transition-all">
+                <div id="admin-table-edit-container" class="hidden bg-amber-50 border border-amber-200 p-4 rounded-2xl space-y-2 transition-all">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-black text-amber-900 flex items-center gap-1">
-                            <i data-lucide="unlock" class="w-3.5 h-3.5 text-amber-700"></i> تعديل الطاولة يدوياً (وضع
-                            النادل/المدير):
+                            <i data-lucide="unlock" class="w-3.5 h-3.5 text-amber-700"></i> تعديل الطاولة يدوياً (وضع النادل/المدير):
                         </label>
-                        <span
-                            class="text-[10px] bg-amber-200 text-amber-800 font-bold px-2 py-0.5 rounded-full">مفتوح</span>
+                        <span class="text-[10px] bg-amber-200 text-amber-800 font-bold px-2 py-0.5 rounded-full">مفتوح</span>
                     </div>
-                    <input type="number" id="input-table" value="0" min="1"
-                        class="w-full bg-white border border-amber-300 rounded-xl p-3 text-center text-lg font-black text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-600 outline-none">
+                    <input type="number" id="input-table" value="0" min="1" class="w-full bg-white border border-amber-300 rounded-xl p-3 text-center text-lg font-black text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-600 outline-none">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold text-stone-700 mb-2">ملاحظات إضافية على الطلب
-                        (اختياري):</label>
+                    <label class="block text-sm font-bold text-stone-700 mb-2">ملاحظات إضافية على الطلب (اختياري):</label>
                     <textarea id="order-notes" rows="2" placeholder="مثال: سكر خفيف، بدون نعناع..."
                         class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"></textarea>
                 </div>
@@ -206,8 +191,7 @@
                     <span>رسوم الخدمة الرقمية:</span>
                     <span>مجانية 🎁</span>
                 </div>
-                <div
-                    class="border-t border-stone-200 my-2 pt-2.5 flex justify-between font-black text-stone-900 text-lg">
+                <div class="border-t border-stone-200 my-2 pt-2.5 flex justify-between font-black text-stone-900 text-lg">
                     <span>الإجمالي النهائي:</span>
                     <span id="final-total-price" class="text-amber-800">0 دج</span>
                 </div>
@@ -222,30 +206,24 @@
     </div>
 
     <!-- ==================== شاشة منبثقة سريعة لطلب الرمز السري للمدير (Passcode Modal) ==================== -->
-    <div id="admin-passcode-modal"
-        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
-        <div
-            class="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl space-y-5">
-            <div
-                class="w-12 h-12 bg-amber-950 border border-amber-500 rounded-xl flex items-center justify-center text-amber-500 mx-auto">
+    <div id="admin-passcode-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div class="bg-stone-900 border border-stone-800 w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl space-y-5">
+            <div class="w-12 h-12 bg-amber-950 border border-amber-500 rounded-xl flex items-center justify-center text-amber-500 mx-auto">
                 <i data-lucide="shield-alert" class="w-6 h-6"></i>
             </div>
             <div class="space-y-1">
                 <h3 class="text-lg font-black text-stone-100">وضع تعديل الطاولات والمنيو</h3>
-                <p class="text-xs text-stone-400">أدخل الرمز السري للمدير/الشيف لتفعيل وضع الإدارة وتعديل البيانات
-                    ديريكت.</p>
+                <p class="text-xs text-stone-400">أدخل الرمز السري للمدير/الشيف لتفعيل وضع الإدارة وتعديل البيانات ديريكت.</p>
             </div>
-
-            <input type="password" id="admin-unlock-input" maxlength="9" placeholder="•••••••••"
+            
+            <input type="password" id="admin-unlock-input" maxlength="9" placeholder="•••••••••" 
                 class="w-full bg-stone-950 border border-stone-800 text-stone-100 rounded-xl p-3 text-center text-xl font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500">
-
+            
             <div class="flex gap-3 pt-2">
-                <button onclick="closeAdminUnlockModal()"
-                    class="flex-1 bg-stone-800 hover:bg-stone-700 text-stone-300 py-3 rounded-xl text-xs font-bold transition-colors">
+                <button onclick="closeAdminUnlockModal()" class="flex-1 bg-stone-800 hover:bg-stone-700 text-stone-300 py-3 rounded-xl text-xs font-bold transition-colors">
                     إلغاء
                 </button>
-                <button onclick="verifyAdminUnlock()"
-                    class="flex-1 bg-amber-500 hover:bg-amber-400 text-stone-950 py-3 rounded-xl text-xs font-black transition-colors">
+                <button onclick="verifyAdminUnlock()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-stone-950 py-3 rounded-xl text-xs font-black transition-colors">
                     تأكيد الرمز
                 </button>
             </div>
@@ -253,10 +231,8 @@
     </div>
 
     <!-- ==================== نافذة منبثقة لإضافة وتعديل عناصر المنيو (Add/Edit Menu Item Modal) ==================== -->
-    <div id="menu-item-editor-modal"
-        class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
-        <div
-            class="bg-white border border-stone-200 w-full max-w-md rounded-[2.5rem] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+    <div id="menu-item-editor-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+        <div class="bg-white border border-stone-200 w-full max-w-md rounded-[2.5rem] p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-stone-100 pb-3">
                 <h3 id="menu-modal-title" class="text-lg font-black text-stone-900">إضافة مشروب/حلوى جديدة</h3>
                 <button onclick="closeMenuItemModal()" class="text-stone-400 hover:text-stone-600">
@@ -269,20 +245,17 @@
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-stone-600 mb-1">اسم المشروب أو الطبق:</label>
-                    <input type="text" id="input-item-name"
-                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <input type="text" id="input-item-name" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                 </div>
-
+                
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-stone-600 mb-1">السعر (دج):</label>
-                        <input type="number" id="input-item-price"
-                            class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        <input type="number" id="input-item-price" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-stone-600 mb-1">القسم (الفئة):</label>
-                        <select id="input-item-category"
-                            class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                        <select id="input-item-category" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                             <option value="hot">قهوة ساخنة ☕</option>
                             <option value="cold">مشروبات باردة 🍹</option>
                             <option value="sweets">حلويات وباتيسري 🍰</option>
@@ -293,25 +266,20 @@
 
                 <div>
                     <label class="block text-xs font-bold text-stone-600 mb-1">الوصف التفصيلي:</label>
-                    <textarea id="input-item-desc" rows="2" placeholder="اكتب مكونات أو وصف عصيرك هنا..."
-                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"></textarea>
+                    <textarea id="input-item-desc" rows="2" placeholder="اكتب مكونات أو وصف عصيرك هنا..." class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة العنصر (يمكن تركه
-                        فارغاً):</label>
-                    <input type="url" id="input-item-image" placeholder="https://images.unsplash.com/..."
-                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة العنصر (يمكن تركه فارغاً):</label>
+                    <input type="url" id="input-item-image" placeholder="https://images.unsplash.com/..." class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                 </div>
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button onclick="closeMenuItemModal()"
-                    class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3.5 rounded-xl text-xs font-bold transition-colors">
+                <button onclick="closeMenuItemModal()" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3.5 rounded-xl text-xs font-bold transition-colors">
                     إلغاء
                 </button>
-                <button onclick="saveMenuItem()"
-                    class="flex-1 bg-amber-950 hover:bg-amber-900 text-white py-3.5 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 shadow-md">
+                <button onclick="saveMenuItem()" class="flex-1 bg-amber-950 hover:bg-amber-900 text-white py-3.5 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 shadow-md">
                     <i data-lucide="check" class="w-4 h-4"></i> حفظ في السحاب
                 </button>
             </div>
@@ -319,8 +287,7 @@
     </div>
 
     <!-- ==================== نافذة منبثقة لتعديل معلومات المقهى (Edit Restaurant Info Modal) ==================== -->
-    <div id="restaurant-config-modal"
-        class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
+    <div id="restaurant-config-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
         <div class="bg-white border border-stone-200 w-full max-w-md rounded-[2.5rem] p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-stone-100 pb-3">
                 <h3 class="text-lg font-black text-stone-900">تعديل معلومات وتفاصيل المقهى</h3>
@@ -332,29 +299,23 @@
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-stone-600 mb-1">اسم المقهى / المطعم:</label>
-                    <input type="text" id="input-cafe-name"
-                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <input type="text" id="input-cafe-name" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-stone-600 mb-1">الموقع / العنوان الجغرافي:</label>
-                    <input type="text" id="input-cafe-location"
-                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <input type="text" id="input-cafe-location" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة الغلاف العلوي (Hero
-                        Image):</label>
-                    <input type="url" id="input-cafe-hero" placeholder="https://images.unsplash.com/..."
-                        class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <label class="block text-xs font-bold text-stone-600 mb-1">رابط صورة الغلاف العلوي (Hero Image):</label>
+                    <input type="url" id="input-cafe-hero" placeholder="https://images.unsplash.com/..." class="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
                 </div>
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button onclick="closeRestaurantConfigModal()"
-                    class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3.5 rounded-xl text-xs font-bold transition-colors">
+                <button onclick="closeRestaurantConfigModal()" class="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-700 py-3.5 rounded-xl text-xs font-bold transition-colors">
                     إلغاء
                 </button>
-                <button onclick="window.saveRestaurantInfo()"
-                    class="flex-1 bg-amber-950 hover:bg-amber-900 text-white py-3.5 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 shadow-md">
+                <button onclick="window.saveRestaurantInfo()" class="flex-1 bg-amber-950 hover:bg-amber-900 text-white py-3.5 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 shadow-md">
                     <i data-lucide="check" class="w-4 h-4"></i> حفظ التغييرات السحابية
                 </button>
             </div>
@@ -365,13 +326,11 @@
     <div id="success-modal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden px-4">
         <div class="bg-white w-full max-w-sm rounded-[2rem] p-6 text-center shadow-2xl">
-            <div
-                class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
                 <i data-lucide="check-circle-2" class="w-10 h-10"></i>
             </div>
             <h3 class="text-xl font-black text-stone-900 mb-2">تم إرسال طلبك بنجاح!</h3>
-            <p class="text-sm text-stone-600 mb-6">الطلب وصل ديريكت للمطبخ برقم طاولتك المحددة تلقائياً، ثواني ويكون
-                طلبك واجد!</p>
+            <p class="text-sm text-stone-600 mb-6">الطلب وصل ديريكت للمطبخ برقم طاولتك المحددة تلقائياً، ثواني ويكون طلبك واجد!</p>
             <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 mb-6">
                 <span class="text-xs text-amber-800 block">رقم طلبك للمتابعة</span>
                 <span id="order-id" class="text-lg font-bold text-amber-900">#0000</span>
@@ -449,17 +408,17 @@
         }
 
         // دمج نظام فتح القفل السري للمدير/النادل بكلمة السر 123456789
-        window.promptAdminUnlock = function () {
+        window.promptAdminUnlock = function() {
             document.getElementById('admin-unlock-input').value = '';
             document.getElementById('admin-passcode-modal').classList.remove('hidden');
             setTimeout(() => document.getElementById('admin-unlock-input').focus(), 100);
         };
 
-        window.closeAdminUnlockModal = function () {
+        window.closeAdminUnlockModal = function() {
             document.getElementById('admin-passcode-modal').classList.add('hidden');
         };
 
-        window.verifyAdminUnlock = function () {
+        window.verifyAdminUnlock = function() {
             const secretCode = "123456789";
             const inputCode = document.getElementById('admin-unlock-input').value;
 
@@ -481,7 +440,7 @@
             document.getElementById('admin-table-edit-container').classList.remove('hidden');
             document.getElementById('admin-add-item-btn').classList.remove('hidden');
             document.getElementById('admin-mode-banner').classList.remove('hidden');
-
+            
             const lockIcon = document.getElementById('lock-icon');
             lockIcon.setAttribute('data-lucide', 'unlock');
             lucide.createIcons();
@@ -491,13 +450,13 @@
         }
 
         // دالة الخروج من وضع الإدارة وقفل الميزات للمدير
-        window.logoutAdmin = function () {
+        window.logoutAdmin = function() {
             localStorage.removeItem('menu_admin_session');
             isAdminActive = false;
             document.getElementById('admin-table-edit-container').classList.add('hidden');
             document.getElementById('admin-add-item-btn').classList.add('hidden');
             document.getElementById('admin-mode-banner').classList.add('hidden');
-
+            
             const lockIcon = document.getElementById('lock-icon');
             lockIcon.setAttribute('data-lucide', 'lock');
             lucide.createIcons();
@@ -516,12 +475,12 @@
                     currentCafeName = infoData.name || "مقهى اللحظة الدافئة";
                     currentCafeLocation = infoData.location || "تيبازة، الجزائر";
                     currentCafeHero = infoData.heroImage || "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80";
-
+                    
                     // تحديث معلومات الهيدر والواجهة ديريكت
                     document.getElementById('cafe-name').innerText = currentCafeName;
                     document.getElementById('cafe-location-text').innerHTML = `<i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> ${currentCafeLocation}`;
                     document.getElementById('hero-container').style.backgroundImage = `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(44,30,21,0.85)), url('${currentCafeHero}')`;
-
+                    
                     lucide.createIcons();
                 } else {
                     // إذا لم تكن موجودة، نقوم بتهيئتها بالقيم الافتراضية
@@ -535,19 +494,19 @@
         }
 
         // فتح نافذة تعديل تفاصيل المقهى
-        window.openRestaurantConfigModal = function () {
+        window.openRestaurantConfigModal = function() {
             document.getElementById('input-cafe-name').value = currentCafeName;
             document.getElementById('input-cafe-location').value = currentCafeLocation;
             document.getElementById('input-cafe-hero').value = currentCafeHero;
             document.getElementById('restaurant-config-modal').classList.remove('hidden');
         };
 
-        window.closeRestaurantConfigModal = function () {
+        window.closeRestaurantConfigModal = function() {
             document.getElementById('restaurant-config-modal').classList.add('hidden');
         };
 
         // حفظ التعديلات السحابية لمعلومات المقهى في Firestore
-        window.saveRestaurantInfo = async function () {
+        window.saveRestaurantInfo = async function() {
             const name = document.getElementById('input-cafe-name').value;
             const locationVal = document.getElementById('input-cafe-location').value;
             const heroVal = document.getElementById('input-cafe-hero').value;
@@ -564,7 +523,7 @@
                     location: locationVal,
                     heroImage: heroVal || currentCafeHero
                 });
-
+                
                 closeRestaurantConfigModal();
                 showNotification("تم تحديث معلومات المقهى بنجاح عند كامل الزبائن! 🌐✨", "success");
             } catch (err) {
@@ -650,10 +609,10 @@
         // ==================== ميزات تعديل المنيو للمدير (Firestore CRUD) ====================
 
         // فتح مودال إضافة/تعديل عنصر جديد للمنيو
-        window.openMenuItemModal = function (editDocId = null) {
+        window.openMenuItemModal = function(editDocId = null) {
             const modal = document.getElementById('menu-item-editor-modal');
             const modalTitle = document.getElementById('menu-modal-title');
-
+            
             // تفريغ الحقول ديريكت
             document.getElementById('edit-item-doc-id').value = '';
             document.getElementById('input-item-name').value = '';
@@ -682,12 +641,12 @@
             document.getElementById('input-item-name').focus();
         };
 
-        window.closeMenuItemModal = function () {
+        window.closeMenuItemModal = function() {
             document.getElementById('menu-item-editor-modal').classList.add('hidden');
         };
 
         // حفظ وتحديث عنصر المنيو مباشرة في قاعدة البيانات Firebase
-        window.saveMenuItem = async function () {
+        window.saveMenuItem = async function() {
             const docId = document.getElementById('edit-item-doc-id').value;
             const name = document.getElementById('input-item-name').value;
             const price = parseFloat(document.getElementById('input-item-price').value);
@@ -712,7 +671,7 @@
 
             try {
                 const menuCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'menuItems');
-
+                
                 if (docId) {
                     // وضع التحديث (Update)
                     const targetDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'menuItems', docId);
@@ -732,7 +691,7 @@
         };
 
         // حذف مشروب/طبق نهائياً من المنيو بسحاب Firebase
-        window.deleteMenuItem = async function (docId) {
+        window.deleteMenuItem = async function(docId) {
             const confirmDel = confirm("هل أنت متأكد من رغبتك في حذف هذا المشروب نهائياً من قائمة الزبائن؟");
             if (!confirmDel) return;
 
@@ -747,7 +706,7 @@
         };
 
         // تعديل مشروب ديريكت
-        window.editMenuItem = function (docId) {
+        window.editMenuItem = function(docId) {
             window.openMenuItemModal(docId);
         };
 
@@ -842,7 +801,7 @@
         // إرسال الطلب ديريكت للـ Firebase مع قراءة رقم الطاولة الديناميكي
         window.submitOrder = async function () {
             const notes = document.getElementById('order-notes').value;
-
+            
             // قراءة رقم الطاولة من الحقل (قد يكون معدلاً من النادل بعد إلغاء القفل)
             const manualTableNum = document.getElementById('input-table').value;
             const finalTableToSend = manualTableNum && manualTableNum !== "0" ? manualTableNum : detectedTable;
@@ -887,7 +846,7 @@
         function showNotification(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-
+            
             let bgClass = "bg-stone-900 text-stone-100 border-stone-800";
             let icon = "bell";
 
@@ -921,7 +880,7 @@
         }
 
         // ربط الضغط على Enter في حقل الباسورد للتحقق السريع
-        document.getElementById('admin-unlock-input').addEventListener('keypress', function (e) {
+        document.getElementById('admin-unlock-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 window.verifyAdminUnlock();
             }
